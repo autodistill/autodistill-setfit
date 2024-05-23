@@ -41,10 +41,12 @@ from autodistill_setfit import SetFitModel
 target_model = SetFitModel()
 
 # train a model
-target_model.train("./data.jsonl", epochs=200)
+target_model.train("./data.jsonl", output="model", epochs=5)
+
+target_model = SetFitModel("model")
 
 # run inference on the new model
-pred = target_model.predict("Geospatial data.", conf=0.01)
+pred = target_model.predict("Geospatial data.")
 
 print(pred)
 # geospatial
