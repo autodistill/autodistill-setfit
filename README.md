@@ -36,9 +36,9 @@ Here is an example entry of a record used to train a research paper subject clas
 ```
 
 ```python
-from autodistill_distilbert import DistilBERT
+from autodistill_setfit import SetFitModel
 
-target_model = DistilBERT()
+target_model = SetFitModel()
 
 # train a model
 target_model.train("./data.jsonl", epochs=200)
