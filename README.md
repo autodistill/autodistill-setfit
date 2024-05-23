@@ -3,64 +3,57 @@
     <a align="center" href="" target="_blank">
       <img
         width="850"
-        src="https://media.roboflow.com/open-source/autodistill/autodistill-banner.png?3"
+        src="https://media.roboflow.com/open-source/autodistill/autodistill-banner.png"
       >
     </a>
   </p>
 </div>
 
-# Autodistill Base Model Template
+# Autodistill SetFit Module
 
-**⚠️ Note: Before you start building a Base Model, check out our [Available Models](https://docs.autodistill.com/#available-models) directory to see if a model is already being implemented. If your desired model is being implemented, check the [Autodistill](https://github.com/autodistill/autodistill) GitHub Issues for progress. We encourage you to offer support to models you want to see in Autodistill if work is already being done on them.**
+This repository contains the code supporting the SetFit target model trainer for use with [Autodistill](https://github.com/autodistill/autodistill).
 
-This repository contains a template for use in creating a Base Model for [Autodistill](https://github.com/autodistill/autodistill).
+SetFit is a framework for fine-tuning Sentence Transformer models with a few examples of each class on which you want to train. SetFit is developed by [Hugging Face](https://github.com/huggingface/setfit).
 
-A Base Model is a large model that you can use for automatically labeling data. Autodistill enables you to connect Base Models to a smaller Target Model. A new model is trained using the Target Model architecture and your labeled data. This model will be smaller and thus more cost effective to run.
+## Installation
 
-Autodistill is an ecosystem of Base and Target Models, with the main [Autodistill](https://github.com/autodistill/autodistill) repository acting as the bridge between the two.
+To use the SetFit target model, you will need to install the following dependency:
 
-This repository contains a starter template from which you can create a Base Model extension.
-
-Read the full [Autodistill documentation](https://autodistill.github.io/autodistill/).
-## Steps to Build a Base Model
-
-To build a base model, first rename the `src` directory to the name of the model you want to implement:
-
-```
-mkdir autodistill_model_name
+```bash
+pip3 install autodistill-setfit
 ```
 
-Use underscores to separate words in the folder name.
+## Quickstart
 
-Next, open the `model.py` file. This is the file where your model loading and inference code will be stored. If you need to write helper functions for use with your model -- for example, long methods for loading data, processing extensions -- you may opt to create new files to store the helper scripts.
+The SetFit module takes in `.jsonl` files and trains a text classification model.
 
-In `model.py`, replace the `Model` class name with the name of your model.
+Each record in the JSONL file should have an entry called `text` that contains the text to be classified. The `label` entry should contain the ground truth label for the text. This format is returned by Autodistill base text classification models like the GPTClassifier.
 
-Next, implement the following functions:
+Here is an example entry of a record used to train a research paper subject classifier:
 
-1. `__init__`: Code for loading the model.
-2. `predict`: A function that takes in an image name, runs inference, and returns a `supervision` Detections object (object detection) or a `supervision` Classifications object (classification).
-
-Replace the import statement in the `__init__.py` file in your model directory to point to your model. You only need to import the model, such as:
-
-```
-from autodistill_clip.clip_model import CLIP
+```json
+{"title": "CC-GPX: Extracting High-Quality Annotated Geospatial Data from Common Crawl", "content": "arXiv:2405.11039v1 Announce Type: new \nAbstract: The Common Crawl (CC) corpus....", "classification": "natural language processing"}
 ```
 
-Your version should be set in the `__init__.py` file as `0.1.0` before submitting your model for review.
+```python
+from autodistill_distilbert import DistilBERT
 
-Update the `setup.py` file to use the name of your model where appropriate. Add all of the requisite dependencies to the `install_requires` section.
+target_model = DistilBERT()
 
-Your Base Model should feature a README that shows a minimal example of how to use the base model. This should only be a few lines of code. Refer to `README_EXAMPLE.md` for an example of an Autodistill Base Model README. Feel free to copy this example and replace all parts as required.
+# train a model
+target_model.train("./data.jsonl", epochs=200)
 
-Your package must be licensed under the same license as the model you are using (i.e. if your model uses an Apache 2.0 license, your Autodistill extension must use the same license). Your license should be in a file called `LICENSE`, stored in the root directory of your Autodistill extension GitHub repository.
+# run inference on the new model
+pred = target_model.predict("Geospatial data.", conf=0.01)
 
-Update your README to note the license applied to your package.
+print(pred)
+# geospatial
+```
 
-When your Autodistill extension is ready for testing, open an Issue in the main [Autodistill](https://github.com/autodistill/autodistill) repository with a link to a public GitHub repository that contains your code.
+## License
 
-An Autodistill maintainer will review your code. If accepted, we will:
+This project is licensed under an [MIT license](LICENSE).
 
-1. Add your package to the [Autodistill documentation](https://docs.autodistill.com).
-2. Package your project up to PyPi and publish it as an official `autodistill` extension.
-3. Announce your project on social media.
+## 🏆 Contributing
+
+We love your input! Please see the core Autodistill [contributing guide](https://github.com/autodistill/autodistill/blob/main/CONTRIBUTING.md) to get started. Thank you 🙏 to all our contributors!
