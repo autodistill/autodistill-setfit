@@ -49,6 +49,8 @@ class SetFitTrainer(TextClassificationTargetModel):
             load_best_model_at_end=True,
         )
 
+        args.eval_strategy = args.evaluation_strategy
+
         trainer = Trainer(
             model=model,
             args=args,
